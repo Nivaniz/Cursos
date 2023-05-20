@@ -1,0 +1,15 @@
+{% load static %}
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'blog/styles.css' %}">
+</head>
+<body>
+<main>
+    <img src="{% static 'blog/nir.png' %}" class="top"/>
+    <h1>Mini Blog Sobre Mis Mascotas</h1>
+    <h2>¿Quieres saber más sobre ellas?</h2>
+    {% block content %}{% endblock %}
+</main>
+</body>
