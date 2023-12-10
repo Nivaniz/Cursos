@@ -1,15 +1,18 @@
 import 'dart:io';
 
 import 'controlers/agregar_tarea.dart';
+import 'controlers/eliminar_tarea.dart';
+import 'controlers/ver_tarea.dart';
 
 void main() {
   while (true) {
     print('\n-------- Menú de Tareas --------');
     print('1. Agregar Tarea');
-    print('2. Eliminar Tarea');
-    print('3. Ver Tareas');
+    print('2. Ver Tareas');
+    print('3. Eliminar Tarea');
     print('4. Salir');
     stdout.write('Selecciona una opción (1-4): ');
+    final entrada = stdin;
 
     String opcion = stdin.readLineSync() ?? '';
 
@@ -20,19 +23,17 @@ void main() {
         break;
 
       case '2':
-        var tareas;
-        if (tareas.isEmpty) {
-          print('No hay tareas para eliminar.');
-        } else {
-          print('Tareas Actuales:');
-        }
+        print("Selecionaste ver una tarea");
+        print("Coloca el nombre de la tarea que deseas ver: ");
+        final nombre = entrada.readLineSync();
+        verTarea(nombre ?? '');
         break;
 
       case '3':
-        var tareas;
-        if (tareas.isEmpty) {
-          print('No hay tareas para mostrar.');
-        } else {}
+        print("Selecionaste borrar una tarea");
+        print("Coloca el nombre de la tarea que deseas eliminar: ");
+        final nombre = entrada.readLineSync();
+        eliminarTarea(nombre ?? '');
         break;
 
       case '4':

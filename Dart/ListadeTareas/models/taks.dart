@@ -1,12 +1,9 @@
 import 'proyect.dart';
-import 'sub_task.dart';
 
 class Tarea implements Proyecto {
   final String nombre;
   final String? descripcion;
   EstadoTarea? estado;
-
-  List<SubTarea> subtareas = [];
 
   Tarea(this.nombre,
       {this.descripcion = '', this.estado = EstadoTarea.norealizada});
@@ -24,14 +21,6 @@ class Tarea implements Proyecto {
   @override
   void realizarTarea() {
     estado = EstadoTarea.terminada;
-  }
-
-  void agregarSubTarea(SubTarea subTarea) {
-    subtareas.add(subTarea);
-  }
-
-  void eliminarSubTarea(int index) {
-    subtareas.removeAt(index);
   }
 
   String convertirCadena() {
