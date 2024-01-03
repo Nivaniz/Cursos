@@ -15,57 +15,56 @@ bg_color = "#F3EEEE"  # Beige
 button_color = "#BBCAD6"  # Azul claro
 text_color = "#000000"  # Negro
 
-#Define socket constants
+#Definir constantes
 ENCODER = 'utf-8'
 BYTESIZE = 1024
 global client_socket
 
-#Define Functions
 def connect():
-    '''Connect to a server at a given ip/port address'''
+    '''Conectar a un servidor en una dirección IP/puerto específica.'''
     global client_socket
 
-    #Clear any previous chats
+    #Borrar anteriores chats o información
     my_listbox.delete(0, END)
 
-    #Get the required connection information
+    #Conseguir la información
     name = name_entry.get()
     ip = ip_entry.get()
     port = port_entry.get()
 
-    #Only try to make a connection if all three fields are filled in
+    #Solo intentar establecer una conexión si los tres campos están completos
     if name and ip and port:
-        #Conditions for connection are met, try for connection
-        my_listbox.insert(0, f"{name} is waiting to connect to {ip} at {port}...")
+        #Se cumplen las condiciones para la conexión, intente la conexión.
+        my_listbox.insert(0, f"{name} está esperando para conectarse con {ip} al {port}...")
 
-        #Create a client socket to connect to the server
+        #Crear un socket de cliente para conectarse al servidor
         client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         client_socket.connect((ip, int(port)))
 
-        #Verify that the connection is valid
+        #Verificar que la conexión es válida
         verify_connection(name)
     else:
-        #Conditions for connection were not met
-        my_listbox.insert(0, "Insufficient information for connection...")
+        #Las condiciones para la conexión no se cumplieron
+        my_listbox.insert(0, "Información insuficiente para conectar...")
 
 
 def verify_connection(name):
-    '''Verify that the server connection is valid and pass required information'''
+    '''Verificar que la conexión del servidor sea válida y pase la información requerida'''
     global client_socket
 
-    #The server will send a NAME flag if a valid connection is made
+    #El servidor enviará un indicador si se realiza una conexión válida
     flag = client_socket.recv(BYTESIZE).decode(ENCODER)
 
     if flag == 'NAME':
-        #The connection was made, send client name and await verification
+        #Se realizó la conexión, envíe el nombre del cliente y espere la verificación.
         client_socket.send(name.encode(ENCODER))
         message = client_socket.recv(BYTESIZE).decode(ENCODER)
 
         if message:
-            #Server sent a verification, connection is valid!
+            #El servidor envió una verificación, ¡la conexión es válida!
             my_listbox.insert(0, message)
 
-            #Change button/entry states
+            #Cambiar botón/estados de entrada
             connect_button.config(state=DISABLED)
             disconnect_button.config(state=NORMAL)
             send_button.config(state=NORMAL)
@@ -74,27 +73,25 @@ def verify_connection(name):
             ip_entry.config(state=DISABLED)
             port_entry.config(state=DISABLED)
 
-            #Create a thread to contiuously recieve messages from the server
+            #Crear un hilo para recibir continuamente mensajes del servidor
             recieve_thread = threading.Thread(target=recieve_message)
             recieve_thread.start()
         else:
-            #No verification message was recieved
-            my_listbox.insert(0, "Connection not verified.  Goodbye...")
+            #No se recibió ningún mensaje de verificación.
+            my_listbox.insert(0, "Conexión no verificada")
             client_socket.close()
     else:
-        #No name flag was sent, connection was refused
-        my_listbox.insert(0, "Connection refused.  Goodbye...")
+        #No se envió ningún indicador de nombre, se rechazó la conexión
+        my_listbox.insert(0, "Conexión denegada")
         client_socket.close()
 
 
 def disconnect():
-    '''Disconnect from the server'''
+    '''Desconectar del servidor'''
     global client_socket
-
-    #Close the socket
     client_socket.close()
 
-    #Change button/entry states
+    #Cambiar botón/estados de entrada
     connect_button.config(state=NORMAL)
     disconnect_button.config(state=DISABLED)
     send_button.config(state=DISABLED)
@@ -105,29 +102,29 @@ def disconnect():
 
 
 def send_message():
-    '''Send a message to the server to be broadcast'''
+    '''Enviar un mensaje al servidor para ser transmitido.'''
     global client_socket
 
-    #Send the message to the server
+    #SEnviar un mensaje al servidor
     message = input_entry.get()
     client_socket.send(message.encode(ENCODER))
 
-    #Clear the input entry
+    #Limpiar la entrada
     input_entry.delete(0, END)
 
 
 def recieve_message():
-    '''Recieve an incoming message from the server'''
+    '''Recibir un mensaje entrante del servidor'''
     global client_socket
 
     while True:
         try:
-            #Recivee an incoming message from the server
+            #Recibir mensaje
             message = client_socket.recv(BYTESIZE).decode(ENCODER)
             my_listbox.insert(0, message)
         except:
-            #An error occured, disconnect from the server
-            my_listbox.insert(0, "Closing the connection.  Goodbye...")
+            #Un error ocurrió, desconectamos del servidor
+            my_listbox.insert(0, "Cerrando la conexión ... Hasta pronto!")
             disconnect()
             break
 
@@ -174,11 +171,11 @@ send_button = tk.Button(input_frame, text="Enviar", borderwidth=5, width=10, fon
 input_entry.grid(row=0, column=0, padx=5, pady=5)
 send_button.grid(row=0, column=1, padx=5, pady=5)
 
-# Configure colors
+# Configurar colores
 root.config(bg=bg_color)
 info_frame.config(bg=bg_color)
 output_frame.config(bg=bg_color)
 input_frame.config(bg=bg_color)
 
-# Run the root window's mainloop()
+# Iniciar ventana
 root.mainloop()
